@@ -1,0 +1,71 @@
+# Prepares an update of the formula to a new upstream HBMAME tag.
+#
+# Actions tab -> "Bump HBMAME" -> Run workflow -> enter the tag (e.g. tag2894).
+# It downloads the source, computes its checksum, edits Formula/hbmame.rb on a
+# new branch "bump-<tag>" and pushes that branch. You then open the pull
+# request yourself on GitHub (yellow "Compare & pull request" banner).
+# Opening it yourself matters: a pull request created by a workflow would
+# not start the bottle build.
+name: Bump HBMAME
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Upstream HBMAME tag, e.g. tag2894
+        required: true
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Update formula
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          if [[ ! "$TAG" =~ ^tag([0-9]{3})([0-9]+)$ ]]; then
+            echo "::error::Tag must look like tag2894"; exit 1
+          fi
+          version="0.${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
+          url="https://github.com/Robbbert/hbmame/archive/refs/tags/${TAG}.tar.gz"
+          curl -fsSL "$url" -o src.tar.gz
+          sha="$(sha256sum src.tar.gz | cut -d' ' -f1)"
+          rm src.tar.gz
+
+          f=Formula/hbmame.rb
+          sed -i -E "s|^  url \".*\"|  url \"${url}\"|"           "$f"
+          sed -i -E "s|^  version \".*\"|  version \"${version}\"|" "$f"
+          sed -i -E "s|^  sha256 \"[0-9a-f]{64}\"|  sha256 \"${sha}\"|" "$f"
+          git diff
+
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Push branch
+        env:
+          TAG: ${{ inputs.tag }}
+          REPO: ${{ github.repository }}
+        run: |
+          branch="bump-${TAG}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git commit -am "hbmame ${VERSION}"
+          git push --force origin "$branch"
+          {
+            echo "### Branch \`${branch}\` is ready"
+            echo
+            echo "Open the pull request here (title: hbmame ${VERSION}):"
+            echo "https://github.com/${REPO}/compare/main...${branch}?expand=1"
+          } >> "$GITHUB_STEP_SUMMARY"
