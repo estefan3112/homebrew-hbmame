@@ -1,10 +1,10 @@
 class Hbmame < Formula
   desc "HomeBrew MAME: hacks, homebrew and prototypes for the MAME emulator"
   homepage "https://hbmame.1emulation.com/"
-  url "https://github.com/Robbbert/hbmame/archive/refs/tags/tag2893.tar.gz"
-  version "0.289.3"
+  url "https://github.com/Robbbert/hbmame/archive/refs/tags/tag2894.tar.gz"
+  version "0.289.4"
   # The "Bump HBMAME" workflow fills in the real checksum. Do not edit by hand.
-  sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  sha256 "2995bcfcc655ea3de186d2dba8e27be7ffa8115ca3bb2c48b6c1a653ae910bb4"
   license "GPL-2.0-or-later"
   head "https://github.com/Robbbert/hbmame.git", branch: "master"
 
