@@ -23,8 +23,8 @@ class Hbmame < Formula
 
   bottle do
     root_url "https://github.com/estefan3112/homebrew-hbmame/releases/download/hbmame-0.289.4"
-    sha256 cellar: :any, arm64_tahoe:   "6f5f27fa16d1548f706dc7abfd2a5483b28fca461e14ba2f6de2a99192253cc3"
-    sha256 cellar: :any, arm64_sequoia: "7e74f08b44dea0a8437df0ce4039a4612203deda057e4506512eb8d154fdd689"
+    sha256 cellar: :any, arm64_tahoe:   "90ac9b38f26786b3c325d7b086b3da4d00c7aaf20241bc3684b64a99c50ae62d"
+    sha256 cellar: :any, arm64_sequoia: "ef021cc63461668411429c3a3491e5829ad5a85648dd787db5f66a3cfe72fa2b"
   end
 
   depends_on "pkgconf" => :build
