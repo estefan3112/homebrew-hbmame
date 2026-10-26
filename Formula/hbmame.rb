@@ -6,7 +6,7 @@ class Hbmame < Formula
   # The "Bump HBMAME" workflow fills in the real checksum. Do not edit by hand.
   sha256 "2995bcfcc655ea3de186d2dba8e27be7ffa8115ca3bb2c48b6c1a653ae910bb4"
   license "GPL-2.0-or-later"
-  revision 1
+  revision 2
   head "https://github.com/Robbbert/hbmame.git", branch: "master"
 
   # HBMAME tags look like `tag2894`, meaning version 0.289.4.
@@ -103,6 +103,12 @@ class Hbmame < Formula
       # -noreadconfig above must not end up in the saved file.
       sed -i '' 's/^readconfig .*/readconfig                1/' hbmame.ini
 
+      # -createconfig writes an empty plugin.ini (same in upstream MAME),
+      # which hbmame then reports as "Error loading plugin.ini". Without the
+      # file, the default plugins load; hbmame writes plugin.ini itself as soon
+      # as plugins are changed in its Plugin Options menu.
+      rm -f plugin.ini
+
       echo "Created $DIR/hbmame.ini"
       echo "Put your HBMAME ROMs into $DIR/roms (or edit rompath in hbmame.ini)."
     SH
@@ -138,5 +144,7 @@ class Hbmame < Formula
     assert_path_exists ini
     assert_match "share/hbmame/hash", ini.read
     assert_match(/^readconfig\s+1$/, ini.read)
+    plugin_ini = testpath/"Library/Application Support/hbmame/plugin.ini"
+    refute_path_exists plugin_ini
   end
 end
