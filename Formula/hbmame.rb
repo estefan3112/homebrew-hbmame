@@ -6,7 +6,7 @@ class Hbmame < Formula
   # The "Bump HBMAME" workflow fills in the real checksum. Do not edit by hand.
   sha256 "2995bcfcc655ea3de186d2dba8e27be7ffa8115ca3bb2c48b6c1a653ae910bb4"
   license "GPL-2.0-or-later"
-  revision 2
+  revision 3
   head "https://github.com/Robbbert/hbmame.git", branch: "master"
 
   # HBMAME tags look like `tag2894`, meaning version 0.289.4.
@@ -45,7 +45,12 @@ class Hbmame < Formula
                    "USE_LIBSDL=1",
                    "OSD=sdl3",
                    "VERBOSE=1"
-    bin.install "hbmame"
+    # The real program goes to libexec; bin/hbmame is a small wrapper that
+    # switches off macOS "Spaces" fullscreen in SDL. Otherwise a game started
+    # from HBMAME's own system list opens in a window on the desktop instead
+    # of fullscreen. Frontends calling bin/hbmame get this automatically.
+    libexec.install "hbmame"
+    (bin/"hbmame").write_env_script libexec/"hbmame", SDL_VIDEO_MAC_FULLSCREEN_SPACES: "0"
 
     # Runtime folders, laid out like Homebrew MAME's share/mame.
     data = %w[artwork bgfx ctrlr hash ini language plugins samples uismall.bdf]
