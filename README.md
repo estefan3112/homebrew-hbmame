@@ -33,19 +33,23 @@ use `$(brew --prefix)/bin/hbmame` and `$(brew --prefix)/share/hbmame`.
 
 ## First-time setup
 
-The setup is the same as for Homebrew MAME, described in detail in
-[MAME via Homebrew on Macs](https://mameonmacs.blogspot.com/2025/12/mame-via-homebrew-on-macs-finally-there.html).
-Replace `mame` with `hbmame` and `/opt/homebrew/share/mame` with `/opt/homebrew/share/hbmame`:
+Run this once after installing:
 
-1. Make an empty folder, `cd` into it and run `hbmame -createconfig` to create `hbmame.ini`.
-2. In `hbmame.ini`, point the system paths at the Homebrew folders:
-   ```
-   hashpath      /opt/homebrew/share/hbmame/hash
-   pluginspath   /opt/homebrew/share/hbmame/plugins
-   languagepath  /opt/homebrew/share/hbmame/language
-   bgfx_path     /opt/homebrew/share/hbmame/bgfx
-   ```
-   and set `rompath` (and the other user folders) to where you keep your HBMAME data.
+```sh
+hbmame-setup
+```
+
+It creates `~/Library/Application Support/hbmame` with the usual sub-folders (`roms`, `cfg`,
+`nvram`, `artwork`, `ini`, ...) and a starter `hbmame.ini` that already points at the Homebrew
+support files in `/opt/homebrew/share/hbmame`. An existing `hbmame.ini` is never changed.
+
+Then put your HBMAME ROMs into `~/Library/Application Support/hbmame/roms`, or change
+`rompath` in `hbmame.ini` to where your set lives (several folders separated by `;`).
+
+This is the same layout as Homebrew MAME, described in
+[MAME via Homebrew on Macs](https://mameonmacs.blogspot.com/2025/12/mame-via-homebrew-on-macs-finally-there.html).
+Use either this Homebrew version or the stand-alone HBMAME.app, not both: they share
+`~/Library/Application Support/hbmame`.
 
 ## For frontend developers
 
