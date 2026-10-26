@@ -48,6 +48,8 @@ jobs:
           sed -i -E "s|^  url \".*\"|  url \"${url}\"|"           "$f"
           sed -i -E "s|^  version \".*\"|  version \"${version}\"|" "$f"
           sed -i -E "s|^  sha256 \"[0-9a-f]{64}\"|  sha256 \"${sha}\"|" "$f"
+          # A new version starts again without a revision number.
+          sed -i -E '/^  revision [0-9]+$/d' "$f"
           git diff
 
           echo "VERSION=$version" >> "$GITHUB_ENV"
