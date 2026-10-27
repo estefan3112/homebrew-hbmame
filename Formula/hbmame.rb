@@ -21,6 +21,8 @@ class Hbmame < Formula
     end
   end
 
+  # Bottles are built for Apple Silicon (macOS 15 and 26) and for Intel
+  # (macOS 15) by the "brew test-bot" workflow.
   bottle do
     root_url "https://github.com/estefan3112/homebrew-hbmame/releases/download/hbmame-0.289.4"
     sha256 cellar: :any, arm64_tahoe:   "8f60611cbaefe95102a0d5bea750596167cabdb2f7ae3ae6a3dbfea74d171b34"

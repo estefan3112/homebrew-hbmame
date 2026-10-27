@@ -20,9 +20,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Apple Silicon only. A bottle built on an older macOS also installs
+        # Apple Silicon, now also Intel included. A bottle built on an older macOS also installs
         # on newer ones, so macos-15 covers Sequoia and later.
-        os: [ macos-15, macos-26 ]
+        os: [ macos-15, macos-26, macos-15-intel ]
     runs-on: ${{ matrix.os }}
     # A full HBMAME build is long; GitHub's hard limit is 6 hours.
     timeout-minutes: 360
