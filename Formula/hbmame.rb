@@ -6,7 +6,7 @@ class Hbmame < Formula
   # The "Bump HBMAME" workflow fills in the real checksum. Do not edit by hand.
   sha256 "2995bcfcc655ea3de186d2dba8e27be7ffa8115ca3bb2c48b6c1a653ae910bb4"
   license "GPL-2.0-or-later"
-  revision 3
+  revision 4
   head "https://github.com/Robbbert/hbmame.git", branch: "master"
 
   # HBMAME tags look like `tag2894`, meaning version 0.289.4.
@@ -32,6 +32,12 @@ class Hbmame < Formula
   depends_on "sdl3"
 
   uses_from_macos "python" => :build
+
+  # Backport of mamedev/mame#16649: bgfx on Metal no longer shows a cyan first
+  # frame (same change as estefan3112/hbmame-macos commit 1ec8f94).
+  # Remove this patch once upstream HBMAME includes the fix; a new HBMAME tag
+  # that already contains it will make the patch fail to apply.
+  patch :DATA
 
   def install
     # Homebrew's sdl3 ships no static libraries, so drop the `--static` flag
@@ -153,3 +159,35 @@ class Hbmame < Formula
     refute_path_exists plugin_ini
   end
 end
+
+__END__
+diff --git a/src/osd/modules/render/drawbgfx.cpp b/src/osd/modules/render/drawbgfx.cpp
+index 25a3d9b2..6e8d6eab 100644
+--- a/src/osd/modules/render/drawbgfx.cpp
++++ b/src/osd/modules/render/drawbgfx.cpp
+@@ -1448,6 +1448,7 @@ bool renderer_bgfx::update_dimensions()
+ 			bgfx::setViewFrameBuffer(s_current_view, m_framebuffer->target());
+ 		}
+ 
++		bgfx::setViewRect(s_current_view, 0, 0, m_dimensions.width(), m_dimensions.height());
+ 		bgfx::setViewClear(s_current_view, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000ff, 1.0f, 0);
+ 		bgfx::setViewMode(s_current_view, bgfx::ViewMode::Sequential);
+ 		bgfx::touch(s_current_view);
+@@ -1461,15 +1462,15 @@ void renderer_bgfx::setup_ortho_view()
+ {
+ 	if (!m_ortho_view)
+ 	{
+-		m_ortho_view = std::make_unique<bgfx_ortho_view>(this, 0, m_framebuffer, m_seen_views);
++		m_ortho_view = std::make_unique<bgfx_ortho_view>(this, UINT_MAX, m_framebuffer, m_seen_views);
+ 	}
++	m_ortho_view->update();
+ 	if (m_ortho_view->get_index() == UINT_MAX)
+ 	{
+ 		m_ortho_view->set_index(s_current_view);
+ 		m_ortho_view->setup();
+ 		s_current_view++;
+ 	}
+-	m_ortho_view->update();
+ }
+ 
+ render_primitive_list *renderer_bgfx::get_primitives()
