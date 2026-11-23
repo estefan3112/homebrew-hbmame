@@ -34,7 +34,7 @@ class Hbmame < Formula
 
   # Backport of mamedev/mame#16649: bgfx on Metal no longer shows a cyan first
   # frame (same change as estefan3112/hbmame-macos commit 1ec8f94).
-  
+
   def install
     # Homebrew's sdl3 ships no static libraries, so drop the `--static` flag
     # (same fix as Homebrew's own mame formula).
@@ -155,4 +155,3 @@ class Hbmame < Formula
     refute_path_exists plugin_ini
   end
 end
-
